@@ -73,5 +73,23 @@ public:
 	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
-};
 
+private:
+	void OnAimDownSights();
+	void ToggleADS();
+	void StartADS();
+	void StopADS();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerStartADS();
+	void ServerStartADS_Implementation();
+	bool ServerStartADS_Validate();
+
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerStopADS();
+	void ServerStopADS_Implementation();
+	bool ServerStopADS_Validate();
+
+	UPROPERTY(Replicated)
+	bool bPlayerIsADS = false;
+};

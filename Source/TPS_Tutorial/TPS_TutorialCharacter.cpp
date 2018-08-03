@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "UnrealNetwork.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ATPS_TutorialCharacter
@@ -84,6 +85,9 @@ void ATPS_TutorialCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 
 	// VR headset functionality
 	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &ATPS_TutorialCharacter::OnResetVR);
+
+	PlayerInputComponent->BindAction("AimDownSights", IE_Pressed, this, &ATPS_TutorialCharacter::OnAimDownSights);
+	PlayerInputComponent->BindAction("AimDownSights", IE_Released, this, &ATPS_TutorialCharacter::OnAimDownSights);
 }
 
 
@@ -149,4 +153,87 @@ void ATPS_TutorialCharacter::Tick(float DeltaSeconds)
 
 	bool bOverlapped = GetCapsuleComponent()->IsOverlappingComponent(CameraVisibilitySphere);
 	GetMesh()->SetOwnerNoSee(bOverlapped);
+}
+
+void ATPS_TutorialCharacter::OnAimDownSights()
+{
+	ToggleADS();
+
+	if (bPlayerIsADS)
+	{
+		CameraBoom->TargetArmLength = 60.0f;
+		FollowCamera->SetFieldOfView(75.0f);
+	}
+	else
+	{
+		CameraBoom->TargetArmLength = 100.0f;
+		FollowCamera->SetFieldOfView(90.0f);
+	}
+}
+
+void ATPS_TutorialCharacter::ToggleADS()
+{
+	if (!bPlayerIsADS)
+	{
+		StartADS();
+	}
+	else
+	{
+		StopADS();
+	}
+}
+
+void ATPS_TutorialCharacter::StartADS()
+{
+	if (!HasAuthority())
+	{
+		ServerStartADS();
+	}
+
+	bPlayerIsADS = true;
+
+	FollowCamera->bUsePawnControlRotation = true;
+	bUseControllerRotationYaw = true;
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+}
+
+void ATPS_TutorialCharacter::StopADS()
+{
+	if (!HasAuthority())
+	{
+		ServerStopADS();
+	}
+
+	bPlayerIsADS = false;
+
+	FollowCamera->bUsePawnControlRotation = false;
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+}
+
+void ATPS_TutorialCharacter::ServerStartADS_Implementation()
+{
+	StartADS();
+}
+
+bool ATPS_TutorialCharacter::ServerStartADS_Validate()
+{
+	return true;
+}
+
+void ATPS_TutorialCharacter::ServerStopADS_Implementation()
+{
+	StopADS();
+}
+
+bool ATPS_TutorialCharacter::ServerStopADS_Validate()
+{
+	return true;
+}
+
+void ATPS_TutorialCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ATPS_TutorialCharacter, bPlayerIsADS);
 }
