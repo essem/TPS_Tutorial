@@ -18,6 +18,9 @@ class ATPS_TutorialCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+
+	class USphereComponent* CameraVisibilitySphere = nullptr;
+
 public:
 	ATPS_TutorialCharacter();
 
@@ -28,6 +31,8 @@ public:
 	/** Base look up/down rate, in deg/sec. Other scaling may affect final rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
 	float BaseLookUpRate;
+
+	virtual void Tick(float DeltaSeconds) override;
 
 protected:
 
