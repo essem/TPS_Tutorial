@@ -58,6 +58,22 @@ ATPS_TutorialCharacter::ATPS_TutorialCharacter()
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
 
+void ATPS_TutorialCharacter::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	if (RifleMesh)
+	{
+		USkeletalMeshComponent* RifleComp = NewObject<USkeletalMeshComponent>(this);
+		if (RifleComp)
+		{
+			RifleComp->RegisterComponent();
+			RifleComp->SetSkeletalMesh(RifleMesh);
+			RifleComp->AttachTo(GetMesh(), FName("RHand_WeaponSocket"), EAttachLocation::SnapToTarget);
+		}
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 // Input
 
