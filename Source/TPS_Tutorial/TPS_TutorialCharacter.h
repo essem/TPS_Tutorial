@@ -74,6 +74,9 @@ public:
 	/** Returns FollowCamera subobject **/
 	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
 
+	UFUNCTION(BlueprintCallable)
+	bool IsPlayerADS() const { return bPlayerIsADS; }
+
 private:
 	void OnAimDownSights();
 	void ToggleADS();
