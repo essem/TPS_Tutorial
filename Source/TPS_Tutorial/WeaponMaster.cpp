@@ -41,6 +41,8 @@ void AWeaponMaster::StartFire()
 	}
 
 	CameraAim();
+
+	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("should be fireing weapon"));
 }
 
 void AWeaponMaster::StopFire()

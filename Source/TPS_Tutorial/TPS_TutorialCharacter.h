@@ -79,6 +79,8 @@ public:
 	bool IsPlayerADS() const { return bPlayerIsADS; }
 
 private:
+	void GiveDefaultWeapons();
+
 	void OnAimDownSights();
 	void OnAttackPressed();
 	void OnAttackReleased();
@@ -87,8 +89,8 @@ private:
 	void StartADS();
 	void StopADS();
 
-	UPROPERTY(EditAnywhere)
-	USkeletalMesh* RifleMesh;
+	//UPROPERTY(EditAnywhere)
+	//USkeletalMesh* RifleMesh;
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerStartADS();
@@ -108,4 +110,7 @@ private:
 
 	UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)
 	class AWeaponMaster* EquippedWeapon;
+
+	UPROPERTY(EditAnywhere)
+	TArray<TSubclassOf<class AWeaponMaster>> DefaultWeapons;
 };
