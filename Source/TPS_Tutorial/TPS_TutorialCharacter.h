@@ -80,6 +80,9 @@ public:
 
 private:
 	void OnAimDownSights();
+	void OnAttackPressed();
+	void OnAttackReleased();
+
 	void ToggleADS();
 	void StartADS();
 	void StopADS();
@@ -97,6 +100,12 @@ private:
 	void ServerStopADS_Implementation();
 	bool ServerStopADS_Validate();
 
+	UFUNCTION()
+	void OnRep_EquippedWeapon();
+
 	UPROPERTY(Replicated)
 	bool bPlayerIsADS = false;
+
+	UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)
+	class AWeaponMaster* EquippedWeapon;
 };

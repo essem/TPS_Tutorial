@@ -10,6 +10,7 @@
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "UnrealNetwork.h"
+#include "WeaponMaster.h"
 
 //////////////////////////////////////////////////////////////////////////
 // ATPS_TutorialCharacter
@@ -104,6 +105,9 @@ void ATPS_TutorialCharacter::SetupPlayerInputComponent(class UInputComponent* Pl
 
 	PlayerInputComponent->BindAction("AimDownSights", IE_Pressed, this, &ATPS_TutorialCharacter::OnAimDownSights);
 	PlayerInputComponent->BindAction("AimDownSights", IE_Released, this, &ATPS_TutorialCharacter::OnAimDownSights);
+
+	PlayerInputComponent->BindAction("Attack", IE_Pressed, this, &ATPS_TutorialCharacter::OnAttackPressed);
+	PlayerInputComponent->BindAction("Attack", IE_Released, this, &ATPS_TutorialCharacter::OnAttackReleased);
 }
 
 
@@ -187,6 +191,22 @@ void ATPS_TutorialCharacter::OnAimDownSights()
 	}
 }
 
+void ATPS_TutorialCharacter::OnAttackPressed()
+{
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->StartFire();
+	}
+}
+
+void ATPS_TutorialCharacter::OnAttackReleased()
+{
+	if (EquippedWeapon)
+	{
+		EquippedWeapon->StopFire();
+	}
+}
+
 void ATPS_TutorialCharacter::ToggleADS()
 {
 	if (!bPlayerIsADS)
@@ -247,9 +267,14 @@ bool ATPS_TutorialCharacter::ServerStopADS_Validate()
 	return true;
 }
 
+void ATPS_TutorialCharacter::OnRep_EquippedWeapon()
+{
+}
+
 void ATPS_TutorialCharacter::GetLifetimeReplicatedProps(TArray< FLifetimeProperty > & OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ATPS_TutorialCharacter, bPlayerIsADS);
+	DOREPLIFETIME(ATPS_TutorialCharacter, EquippedWeapon);
 }
