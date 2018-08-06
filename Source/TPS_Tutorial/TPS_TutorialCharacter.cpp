@@ -57,6 +57,8 @@ ATPS_TutorialCharacter::ATPS_TutorialCharacter()
 
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
+
+	RHandWeaponSocket = FName("RHand_WeaponSocket");
 }
 
 void ATPS_TutorialCharacter::OnConstruction(const FTransform& Transform)
@@ -190,6 +192,23 @@ void ATPS_TutorialCharacter::Tick(float DeltaSeconds)
 
 	bool bOverlapped = GetCapsuleComponent()->IsOverlappingComponent(CameraVisibilitySphere);
 	GetMesh()->SetOwnerNoSee(bOverlapped);
+}
+
+AWeaponMaster* ATPS_TutorialCharacter::GetHolstedWeapons(EWeaponInventorySlot Slot) const
+{
+	switch (Slot)
+	{
+	case EWeaponInventorySlot::Melee:
+		return MeleeWeapon;
+
+	case EWeaponInventorySlot::Primary:
+		return PrimaryWeapon;
+
+	case EWeaponInventorySlot::Secondary:
+		return SecondaryWeapon;
+	}
+
+	return nullptr;
 }
 
 void ATPS_TutorialCharacter::OnAimDownSights()

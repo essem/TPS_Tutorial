@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "WeaponInventorySlot.h"
 #include "TPS_TutorialCharacter.generated.h"
 
 UCLASS(config=Game)
@@ -78,6 +79,13 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsPlayerADS() const { return bPlayerIsADS; }
 
+	FName GetRHandWeaponSocket() const { return RHandWeaponSocket; }
+
+	class AWeaponMaster* GetEquippedWeapon() const { return EquippedWeapon; }
+	void SetEquippedWeapon(class AWeaponMaster* InEquippedWeapon) { EquippedWeapon = InEquippedWeapon; }
+
+	class AWeaponMaster* GetHolstedWeapons(EWeaponInventorySlot Slot) const;
+
 private:
 	void GiveDefaultWeapons();
 
@@ -111,6 +119,18 @@ private:
 	UPROPERTY(ReplicatedUsing = OnRep_EquippedWeapon)
 	class AWeaponMaster* EquippedWeapon;
 
+	UPROPERTY(Replicated)
+	class AWeaponMaster* MeleeWeapon;
+
+	UPROPERTY(Replicated)
+	class AWeaponMaster* PrimaryWeapon;
+
+	UPROPERTY(Replicated)
+	class AWeaponMaster* SecondaryWeapon;
+
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<class AWeaponMaster>> DefaultWeapons;
+
+	UPROPERTY(EditAnywhere)
+	FName RHandWeaponSocket;
 };

@@ -4,16 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "WeaponInventorySlot.h"
 #include "WeaponMaster.generated.h"
-
-UENUM(BlueprintType)
-enum class EWeaponInventorySlot : uint8
-{
-	None,
-	Melee,
-	Primary,
-	Secondary
-};
 
 USTRUCT(BlueprintType)
 struct FCharacterWeaponSlot
@@ -35,6 +27,10 @@ public:
 	void StartFire();
 	void StopFire();
 
+	// Pawn
+	void SetOwningPawn(class ATPS_TutorialCharacter* InOwningPawn);
+	void AttachToOwnerHolster();
+
 private:
 	void CameraAim();
 
@@ -44,8 +40,16 @@ private:
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerStopFire();
 
+	UFUNCTION()
+	void OnRep_OwningPawn();
+
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* WeaponMesh;
 
+	UPROPERTY(ReplicatedUsing = OnRep_OwningPawn)
+	class ATPS_TutorialCharacter* OwningPawn;
+
 	bool bWantsToFire = false;
+	bool bNeedsAttachedUpdateOnOwnerRep = false;
+	EWeaponInventorySlot SlotType = EWeaponInventorySlot::None;
 };
