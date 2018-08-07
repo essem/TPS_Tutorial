@@ -32,6 +32,7 @@ public:
 	void AttachToOwnerHolster();
 
 private:
+	FVector GetMuzzleLocation() const;
 	void CameraAim();
 
 	UFUNCTION(Server, Reliable, WithValidation)
@@ -46,10 +47,14 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	USkeletalMeshComponent* WeaponMesh;
 
+	UPROPERTY(EditAnywhere)
+	FName MuzzleSocket;
+
 	UPROPERTY(ReplicatedUsing = OnRep_OwningPawn)
 	class ATPS_TutorialCharacter* OwningPawn;
 
 	bool bWantsToFire = false;
 	bool bNeedsAttachedUpdateOnOwnerRep = false;
 	EWeaponInventorySlot SlotType = EWeaponInventorySlot::None;
+	FVector AimVector = FVector::ZeroVector;
 };

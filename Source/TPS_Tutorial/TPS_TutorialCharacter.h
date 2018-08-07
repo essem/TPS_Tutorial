@@ -25,6 +25,7 @@ class ATPS_TutorialCharacter : public ACharacter
 public:
 	ATPS_TutorialCharacter();
 	virtual void OnConstruction(const FTransform& Transform) override;
+	virtual void BeginPlay() override;
 
 	/** Base turn rate, in deg/sec. Other scaling may affect final turn rate. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Camera)
@@ -96,9 +97,6 @@ private:
 	void ToggleADS();
 	void StartADS();
 	void StopADS();
-
-	//UPROPERTY(EditAnywhere)
-	//USkeletalMesh* RifleMesh;
 
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerStartADS();

@@ -64,33 +64,34 @@ ATPS_TutorialCharacter::ATPS_TutorialCharacter()
 void ATPS_TutorialCharacter::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
+}
+
+void ATPS_TutorialCharacter::BeginPlay()
+{
+	Super::BeginPlay();
 
 	GiveDefaultWeapons();
-
-	//if (RifleMesh)
-	//{
-	//	USkeletalMeshComponent* RifleComp = NewObject<USkeletalMeshComponent>(this);
-	//	if (RifleComp)
-	//	{
-	//		RifleComp->RegisterComponent();
-	//		RifleComp->SetSkeletalMesh(RifleMesh);
-	//		RifleComp->AttachTo(GetMesh(), FName("RHand_WeaponSocket"), EAttachLocation::SnapToTarget);
-	//	}
-	//}
 }
 
 void ATPS_TutorialCharacter::GiveDefaultWeapons()
 {
-	if (HasAuthority())
+	AWeaponMaster* WeaponMaster = nullptr;
+	for (auto WeaponClass : DefaultWeapons)
 	{
-		for (auto WeaponClass : DefaultWeapons)
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = this;
+		SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		WeaponMaster = GetWorld()->SpawnActor<AWeaponMaster>(WeaponClass, GetMesh()->GetComponentToWorld(), SpawnParams);
+		if (WeaponMaster)
 		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			SpawnParams.Instigator = this;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			GetWorld()->SpawnActor(WeaponClass, &GetMesh()->GetComponentToWorld(), SpawnParams);
+			WeaponMaster->SetOwningPawn(this);
 		}
+	}
+
+	if (WeaponMaster)
+	{
+		WeaponMaster->AttachToOwnerHolster();
 	}
 }
 

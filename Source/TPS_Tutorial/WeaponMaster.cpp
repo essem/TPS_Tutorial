@@ -8,6 +8,8 @@ AWeaponMaster::AWeaponMaster()
 {
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
 	WeaponMesh->SetupAttachment(RootComponent);
+
+	MuzzleSocket = FName("Muzzle");
 }
 
 void AWeaponMaster::ServerStartFire_Implementation()
@@ -43,8 +45,6 @@ void AWeaponMaster::StartFire()
 	}
 
 	CameraAim();
-
-	GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, TEXT("should be fireing weapon"));
 }
 
 void AWeaponMaster::StopFire()
@@ -60,8 +60,33 @@ void AWeaponMaster::StopFire()
 	}
 }
 
+FVector AWeaponMaster::GetMuzzleLocation() const
+{
+	return WeaponMesh->GetSocketLocation(MuzzleSocket);
+}
+
 void AWeaponMaster::CameraAim()
 {
+	AimVector = OwningPawn->GetBaseAimRotation().Vector();
+
+	static const FName LineTraceSingleName(TEXT("TPS_Tutorial_LineTraceSingle"));
+	//GetWorld()->DebugDrawTraceTag = LineTraceSingleName;
+
+	FCollisionQueryParams Params;
+	Params.TraceTag = LineTraceSingleName;
+	Params.AddIgnoredActor(this);
+
+	FVector Start = GetMuzzleLocation();
+	FVector End;
+	FHitResult HitResult;
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility, Params);
+
+	if (bHit)
+	{
+		AimVector = HitResult.Location;
+	}
+
+	AimVector = OwningPawn->GetBaseAimRotation().Vector();
 }
 
 void AWeaponMaster::SetOwningPawn(ATPS_TutorialCharacter* InOwningPawn)
