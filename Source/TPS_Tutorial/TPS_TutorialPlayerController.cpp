@@ -4,7 +4,7 @@
 #include "TPS_TutorialCharacter.h"
 #include "Camera/CameraComponent.h"
 
-void ATPS_TutorialPlayerController::ViewPoint()
+FVector ATPS_TutorialPlayerController::GetViewPoint() const
 {
 	ATPS_TutorialCharacter* Character = Cast<ATPS_TutorialCharacter>(GetPawn());
 	if (Character)
@@ -14,15 +14,23 @@ void ATPS_TutorialPlayerController::ViewPoint()
 		{
 			FMinimalViewInfo DesiredView;
 			FollowCamera->GetCameraView(0.0f, DesiredView);
-			OutViewLocation = DesiredView.Location;
-			return;
+			return DesiredView.Location;
 		}
 	}
 
-	OutViewLocation = GetFocalLocation();
+	return GetFocalLocation();
 }
 
-void ATPS_TutorialPlayerController::AimVector()
+FVector ATPS_TutorialPlayerController::GetAimVector() const
 {
+	APawn* Pawn = GetPawn();
 
+	if (Pawn)
+	{
+		return Pawn->GetBaseAimRotation().Vector();
+	}
+	else
+	{
+		return GetControlRotation().Vector();
+	}
 }

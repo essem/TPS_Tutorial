@@ -50,6 +50,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	FName MuzzleSocket;
 
+	UPROPERTY(EditAnywhere)
+	class UParticleSystem* HitParticle;
+
 	UPROPERTY(ReplicatedUsing = OnRep_OwningPawn)
 	class ATPS_TutorialCharacter* OwningPawn;
 

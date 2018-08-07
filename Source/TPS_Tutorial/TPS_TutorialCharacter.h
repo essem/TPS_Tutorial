@@ -87,6 +87,8 @@ public:
 
 	class AWeaponMaster* GetHolstedWeapons(EWeaponInventorySlot Slot) const;
 
+	class ATPS_TutorialPlayerController* GetCastedOwner() const;
+
 private:
 	void GiveDefaultWeapons();
 

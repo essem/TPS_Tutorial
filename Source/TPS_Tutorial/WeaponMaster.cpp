@@ -2,7 +2,9 @@
 
 #include "WeaponMaster.h"
 #include "TPS_TutorialCharacter.h"
+#include "TPS_TutorialPlayerController.h"
 #include "UnrealNetwork.h"
+#include "Kismet/GameplayStatics.h"
 
 AWeaponMaster::AWeaponMaster()
 {
@@ -45,6 +47,8 @@ void AWeaponMaster::StartFire()
 	}
 
 	CameraAim();
+
+	UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), HitParticle, AimVector);
 }
 
 void AWeaponMaster::StopFire()
@@ -67,8 +71,6 @@ FVector AWeaponMaster::GetMuzzleLocation() const
 
 void AWeaponMaster::CameraAim()
 {
-	AimVector = OwningPawn->GetBaseAimRotation().Vector();
-
 	static const FName LineTraceSingleName(TEXT("TPS_Tutorial_LineTraceSingle"));
 	//GetWorld()->DebugDrawTraceTag = LineTraceSingleName;
 
@@ -78,6 +80,14 @@ void AWeaponMaster::CameraAim()
 
 	FVector Start = GetMuzzleLocation();
 	FVector End;
+
+	ATPS_TutorialPlayerController* Controller = OwningPawn->GetCastedOwner();
+	if (Controller)
+	{
+		End = Controller->GetViewPoint() + Controller->GetAimVector() * 100000.0f;
+	}
+
+
 	FHitResult HitResult;
 	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECollisionChannel::ECC_Visibility, Params);
 
@@ -85,8 +95,10 @@ void AWeaponMaster::CameraAim()
 	{
 		AimVector = HitResult.Location;
 	}
-
-	AimVector = OwningPawn->GetBaseAimRotation().Vector();
+	else
+	{
+		AimVector = End - Start;
+	}
 }
 
 void AWeaponMaster::SetOwningPawn(ATPS_TutorialCharacter* InOwningPawn)

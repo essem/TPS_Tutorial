@@ -11,8 +11,8 @@ class ATPS_TutorialPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
-	void ViewPoint();
-	void AimVector();
+	FVector GetViewPoint() const;
+	FVector GetAimVector() const;
 
 private:
 	FVector OutViewLocation = FVector::ZeroVector;

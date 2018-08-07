@@ -7,8 +7,8 @@
 #include "Components/InputComponent.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "TPS_TutorialPlayerController.h"
 #include "UnrealNetwork.h"
 #include "WeaponMaster.h"
 
@@ -210,6 +210,11 @@ AWeaponMaster* ATPS_TutorialCharacter::GetHolstedWeapons(EWeaponInventorySlot Sl
 	}
 
 	return nullptr;
+}
+
+ATPS_TutorialPlayerController* ATPS_TutorialCharacter::GetCastedOwner() const
+{
+	return Cast<ATPS_TutorialPlayerController>(GetController());
 }
 
 void ATPS_TutorialCharacter::OnAimDownSights()
