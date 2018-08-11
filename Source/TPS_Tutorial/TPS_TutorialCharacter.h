@@ -80,6 +80,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsPlayerADS() const { return bPlayerIsADS; }
 
+	UFUNCTION(BlueprintCallable, Category = "Animation Handlers|IK Feet")
+	float GetIKOffsetRightFoot() const { return IKOffsetRightFoot; }
+
+	UFUNCTION(BlueprintCallable, Category = "Animation Handlers|IK Feet")
+	float GetIKOffsetLeftFoot() const { return IKOffsetLeftFoot; }
+
 	FName GetRHandWeaponSocket() const { return RHandWeaponSocket; }
 
 	class AWeaponMaster* GetEquippedWeapon() const { return EquippedWeapon; }
@@ -140,8 +146,8 @@ private:
 	float IKTraceDistance = 0.0f;
 	FName RightFootSocket = FName("foot_rSocket");
 	FName LeftFootSocket = FName("foot_lSocket");
-	float Scale = 100.0f;
+	float Scale = 50.0f;
 	float IKOffsetRightFoot = 0.0f;
 	float IKOffsetLeftFoot = 0.0f;
-	float IKInterpSpeed = 10.0f;
+	float IKInterpSpeed = 15.0f;
 };

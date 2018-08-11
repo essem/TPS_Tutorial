@@ -18,7 +18,7 @@
 ATPS_TutorialCharacter::ATPS_TutorialCharacter()
 {
 	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(10.f, 96.0f);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Overlap);
 
 	// set our turn rates for input
@@ -71,6 +71,10 @@ void ATPS_TutorialCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	GiveDefaultWeapons();
+
+	// Set IK Trace distance variables
+	Scale = GetActorScale().Z;
+	IKTraceDistance = GetCapsuleComponent()->GetUnscaledCapsuleHalfHeight() * Scale;
 }
 
 void ATPS_TutorialCharacter::GiveDefaultWeapons()
@@ -310,7 +314,7 @@ float ATPS_TutorialCharacter::IKFootTrace(float TraceDistance, FName Socket)
 	FVector SocketLocation = GetMesh()->GetSocketLocation(Socket);
 	FVector ActorLocation = GetActorLocation();
 
-	float ToBottomOfFoot = TraceDistance - ActorLocation.Z;
+	float ToBottomOfFoot = ActorLocation.Z - TraceDistance;
 
 	FVector Start(SocketLocation.X, SocketLocation.Y, ActorLocation.Z);
 	FVector End(SocketLocation.X, SocketLocation.Y, ToBottomOfFoot);
