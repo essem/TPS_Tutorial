@@ -100,6 +100,8 @@ private:
 	void StartADS();
 	void StopADS();
 
+	float IKFootTrace(float TraceDistance, FName Socket);
+
 	UFUNCTION(Server, Reliable, WithValidation)
 	void ServerStartADS();
 	void ServerStartADS_Implementation();
@@ -133,4 +135,13 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	FName RHandWeaponSocket;
+
+	// Animation Handlers : IK Feet
+	float IKTraceDistance = 0.0f;
+	FName RightFootSocket = FName("foot_rSocket");
+	FName LeftFootSocket = FName("foot_lSocket");
+	float Scale = 100.0f;
+	float IKOffsetRightFoot = 0.0f;
+	float IKOffsetLeftFoot = 0.0f;
+	float IKInterpSpeed = 10.0f;
 };

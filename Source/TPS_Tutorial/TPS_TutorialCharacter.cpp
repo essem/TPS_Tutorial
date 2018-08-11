@@ -193,6 +193,22 @@ void ATPS_TutorialCharacter::Tick(float DeltaSeconds)
 
 	bool bOverlapped = GetCapsuleComponent()->IsOverlappingComponent(CameraVisibilitySphere);
 	GetMesh()->SetOwnerNoSee(bOverlapped);
+
+	float RightTraceValue = IKFootTrace(IKTraceDistance, RightFootSocket);
+	float CurrentRightOffset = FMath::FInterpTo(IKOffsetRightFoot, RightTraceValue, DeltaSeconds, IKInterpSpeed);
+
+	if (CurrentRightOffset < 40.0f)
+	{
+		IKOffsetRightFoot = CurrentRightOffset;
+	}
+
+	float LeftTraceValue = IKFootTrace(IKTraceDistance, LeftFootSocket);
+	float CurrentLeftOffset = FMath::FInterpTo(IKOffsetLeftFoot, LeftTraceValue, DeltaSeconds, IKInterpSpeed);
+
+	if (CurrentLeftOffset < 40.0f)
+	{
+		IKOffsetLeftFoot = CurrentLeftOffset;
+	}
 }
 
 AWeaponMaster* ATPS_TutorialCharacter::GetHolstedWeapons(EWeaponInventorySlot Slot) const
@@ -287,6 +303,34 @@ void ATPS_TutorialCharacter::StopADS()
 	FollowCamera->bUsePawnControlRotation = false;
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->bOrientRotationToMovement = true;
+}
+
+float ATPS_TutorialCharacter::IKFootTrace(float TraceDistance, FName Socket)
+{
+	FVector SocketLocation = GetMesh()->GetSocketLocation(Socket);
+	FVector ActorLocation = GetActorLocation();
+
+	float ToBottomOfFoot = TraceDistance - ActorLocation.Z;
+
+	FVector Start(SocketLocation.X, SocketLocation.Y, ActorLocation.Z);
+	FVector End(SocketLocation.X, SocketLocation.Y, ToBottomOfFoot);
+
+	static const FName LineTraceTag(TEXT("IKFootTrace"));
+
+	FCollisionQueryParams Params;
+	Params.TraceTag = LineTraceTag;
+	Params.AddIgnoredActor(this);
+
+	FHitResult HitResult;
+	bool bHit = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, Params);
+
+	float IKOffset = 0.0f;
+	if (bHit)
+	{
+		IKOffset = (HitResult.Location - End).Size() / Scale;
+	}
+
+	return IKOffset;
 }
 
 void ATPS_TutorialCharacter::ServerStartADS_Implementation()
