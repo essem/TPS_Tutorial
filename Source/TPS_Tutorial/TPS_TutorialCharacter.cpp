@@ -18,7 +18,7 @@
 ATPS_TutorialCharacter::ATPS_TutorialCharacter()
 {
 	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(10.f, 96.0f);
+	GetCapsuleComponent()->InitCapsuleSize(CapsuleRadiusMin, 96.0f);
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Overlap);
 
 	// set our turn rates for input
@@ -213,6 +213,37 @@ void ATPS_TutorialCharacter::Tick(float DeltaSeconds)
 	{
 		IKOffsetLeftFoot = CurrentLeftOffset;
 	}
+
+	AdjustCapsuleComponent(DeltaSeconds);
+}
+
+void ATPS_TutorialCharacter::AdjustCapsuleComponent(float DeltaSeconds)
+{
+	bool bHit = true;
+
+	// Resized capsule until as set max size
+	if (!bIsCapsuleComponentSizeAdjust)
+	{
+		static const FName SphereTraceSingleName(TEXT("AdjustCapsuleComponent"));
+		FCollisionQueryParams Params;
+		Params.TraceTag = SphereTraceSingleName;
+		Params.AddIgnoredActor(this);
+
+		FVector ActorLocation = GetActorLocation();
+		FVector Start(ActorLocation.X, ActorLocation.Y, ActorLocation.Z + 50.0f);
+		FVector End(ActorLocation.X, ActorLocation.Y, ActorLocation.Z + 10.0f);
+
+		FHitResult HitResult;
+		bHit = GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, ECC_Visibility, FCollisionShape::MakeSphere(40.0f), Params);
+	}
+
+	float Current = GetCapsuleComponent()->GetUnscaledCapsuleRadius();
+	float Target = bHit ? CapsuleRadiusMax : CapsuleRadiusMin;
+	CapsuleComponentFInterpValue = FMath::FInterpTo(Current, Target, DeltaSeconds, 5.0f);
+
+	// Adjustment of Capsule Component size and setting of adjustment bool
+	GetCapsuleComponent()->SetCapsuleRadius(CapsuleComponentFInterpValue);
+	bIsCapsuleComponentSizeAdjust = (bHit && CapsuleComponentFInterpValue <= CapsuleRadiusMax - 5.0f);
 }
 
 AWeaponMaster* ATPS_TutorialCharacter::GetHolstedWeapons(EWeaponInventorySlot Slot) const

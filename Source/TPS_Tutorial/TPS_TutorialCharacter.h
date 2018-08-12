@@ -98,6 +98,8 @@ public:
 private:
 	void GiveDefaultWeapons();
 
+	void AdjustCapsuleComponent(float DeltaSeconds);
+
 	void OnAimDownSights();
 	void OnAttackPressed();
 	void OnAttackReleased();
@@ -150,4 +152,10 @@ private:
 	float IKOffsetRightFoot = 0.0f;
 	float IKOffsetLeftFoot = 0.0f;
 	float IKInterpSpeed = 15.0f;
+
+	// Animation Handlers : Component
+	float CapsuleComponentFInterpValue = 0.0f;
+	float CapsuleRadiusMax = 32.0f; // Maximum radius size of the capsule component
+	float CapsuleRadiusMin = 8.0f; // Minimum radius size of the capsule component
+	float bIsCapsuleComponentSizeAdjust = false; // Is the capsule component adjusting its radius size
 };
